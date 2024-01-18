@@ -2,17 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-    <groupId>io.github.rushsky518</groupId>
-    <artifactId>lite-kafka-consumer</artifactId>
-    <version>1.0.2</version>
-
-    <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>lite-kafka-consumer</name>
-    <description>a lightweight tool for kafka consumer</description>
-    <url>https://github.com/rushsky518/lite-kafka-consumer</url>
+    <groupId>io.github.rushsky518</groupId>
+    <artifactId>broadcaster</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>jar</packaging>
+
+    <name>broadcaster</name>
+    <description>a broadcast tool based on kafka</description>
+    <url>https://github.com/rushsky518/broadcaster</url>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -26,15 +26,15 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/rushsky518/lite-kafka-consumer.git</connection>
-        <developerConnection>scm:git:ssh://github.com:rushsky518/lite-kafka-consumer.git</developerConnection>
-        <url>https://github.com/rushsky518/lite-kafka-consumer/tree/main</url>
+        <connection>scm:git:git://github.com/rushsky518/broadcaster.git</connection>
+        <developerConnection>scm:git:ssh://github.com:rushsky518/broadcaster.git</developerConnection>
+        <url>https://github.com/rushsky518/broadcaster/tree/main</url>
     </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -55,9 +55,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.6.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>io.zipkin.brave</groupId>
             <artifactId>brave-instrumentation-kafka-clients</artifactId>
-            <version>5.15.1</version>
+            <version>5.13.2</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
