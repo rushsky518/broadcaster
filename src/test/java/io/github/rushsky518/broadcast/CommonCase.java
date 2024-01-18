@@ -1,9 +1,4 @@
-package broadcast;
-
-import io.github.rushsky518.broadcast.KafkaDispatcher;
-import io.github.rushsky518.broadcast.KafkaPublisher;
-import io.github.rushsky518.broadcast.MessageListener;
-import io.github.rushsky518.broadcast.Notify;
+package io.github.rushsky518.broadcast;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

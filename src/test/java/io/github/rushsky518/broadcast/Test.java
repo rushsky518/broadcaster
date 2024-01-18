@@ -1,4 +1,4 @@
-package broadcast;
+package io.github.rushsky518.broadcast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
