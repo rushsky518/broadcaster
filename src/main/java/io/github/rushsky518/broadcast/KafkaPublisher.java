@@ -9,7 +9,8 @@ import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 
-import static com.broadcast.KafkaDispatcher.DEFAULT_BROADCAST_BUS;
+import static io.github.rushsky518.broadcast.KafkaDispatcher.DEFAULT_BROADCAST_BUS;
+
 
 public class KafkaPublisher implements Publisher {
     private KafkaProducer<String, Object> kafkaProducer;
