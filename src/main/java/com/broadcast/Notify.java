@@ -1,4 +1,4 @@
-package io.github.rushsky518.broadcast;
+package com.broadcast;
 
 public class Notify {
     long createTime;

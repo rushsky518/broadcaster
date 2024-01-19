@@ -1,4 +1,4 @@
-package io.github.rushsky518.broadcast;
+package com.broadcast;
 
 import java.util.concurrent.ExecutorService;
 

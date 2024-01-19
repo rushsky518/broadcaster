@@ -1,4 +1,4 @@
-package io.github.rushsky518.broadcast;
+package com.broadcast;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonGenerator;

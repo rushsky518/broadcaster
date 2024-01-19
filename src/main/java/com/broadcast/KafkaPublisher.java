@@ -1,4 +1,4 @@
-package io.github.rushsky518.broadcast;
+package com.broadcast;
 
 import brave.kafka.clients.KafkaTracing;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -9,7 +9,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 
-import static io.github.rushsky518.broadcast.KafkaDispatcher.DEFAULT_BROADCAST_BUS;
+import static com.broadcast.KafkaDispatcher.DEFAULT_BROADCAST_BUS;
 
 
 public class KafkaPublisher implements Publisher {
