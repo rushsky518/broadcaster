@@ -97,7 +97,7 @@ public class KafkaDispatcher extends Thread implements Subscriber {
             for (ConsumerRecord<String, Notify> record : records) {
                 Notify notify = record.value();
                 notify.createTime = record.timestamp();
-                ExecutorService executorService = executorMap.get(notify.getTag());
+                ExecutorService executorService = executorMap.getOrDefault(notify.getTag(), defaultExecutorService);
                 MessageListener<Notify> listener = subscriberMap.get(notify.getTag());
                 Runnable runnable = () -> {
                     Span span = null;
