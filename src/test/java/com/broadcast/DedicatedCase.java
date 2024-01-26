@@ -2,6 +2,7 @@ package com.broadcast;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.LockSupport;
 
 public class DedicatedCase {
     public static void main(String[] args) {
@@ -27,6 +28,6 @@ public class DedicatedCase {
         publisher.publish("ms_bus", "payment", "1");
         publisher.publish("ms_bus", "delivery", "2");
 
-        kafkaDispatcher.shutdown();
+        LockSupport.park();
     }
 }

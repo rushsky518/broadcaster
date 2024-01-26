@@ -12,6 +12,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
@@ -23,7 +24,7 @@ public class KafkaDispatcher extends Thread implements Subscriber {
     private String topic;
     private boolean newest = true;
     private volatile boolean stop = false;
-    private Map<String, MessageListener<Notify>> subscriberMap = new ConcurrentHashMap<>();
+    private static Map<String, MessageListener<Notify>> subscriberMap = new ConcurrentHashMap<>();
     private Map<String, ExecutorService> executorMap = new ConcurrentHashMap<>();
     private KafkaDispatcher kafkaDispatcher;
     private final ExecutorService defaultExecutorService = Executors.newSingleThreadExecutor();
@@ -98,19 +99,24 @@ public class KafkaDispatcher extends Thread implements Subscriber {
                 records = kafkaConsumer.poll(Duration.ofSeconds(5));
             } catch (Exception ex) {
                 LOGGER.error("poll error", ex);
-                continue;
+                records = ConsumerRecords.empty();
             }
 
             for (ConsumerRecord<String, Notify> record : records) {
-                Notify notify = record.value();
+                final Notify notify = record.value();
                 notify.createTime = record.timestamp();
                 String tag = notify.getTag();
+                if (tag == null) {
+                    continue;
+                }
                 ExecutorService executorService = executorMap.getOrDefault(tag, defaultExecutorService);
                 MessageListener<Notify> listener = subscriberMap.get(tag);
                 if (listener == null) {
                     LOGGER.trace("{} listener is empty", tag);
                     continue;
                 }
+                doParse(record);
+
                 Runnable runnable = () -> {
                     Span span = null;
                     if (this.kafkaTracing != null) {
@@ -151,6 +157,18 @@ public class KafkaDispatcher extends Thread implements Subscriber {
 
         kafkaConsumer.unsubscribe();
         kafkaConsumer.close();
+    }
+
+    private Notify doParse(ConsumerRecord<String, Notify> cr) {
+        Notify notify = cr.value();
+        try {
+            Object payload = JsonJacksonCodec.INSTANCE.getMapObjectMapper().readValue(notify.data, Object.class);
+            notify.payload = payload;
+            notify.data = null;
+        } catch (IOException e) {
+            LOGGER.error("de-serialize error", e);
+        }
+        return notify;
     }
 
     public void shutdown() {

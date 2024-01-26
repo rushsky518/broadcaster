@@ -2,6 +2,7 @@ package com.broadcast;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.LockSupport;
 
 public class CommonCase {
     public static void main(String[] args) {
@@ -28,6 +29,6 @@ public class CommonCase {
         publisher.publish("payment", "1");
         publisher.publish("delivery", "2");
 
-        kafkaDispatcher.shutdown();
+        LockSupport.park();
     }
 }

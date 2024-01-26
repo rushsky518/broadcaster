@@ -12,8 +12,8 @@ import java.util.Properties;
 import static com.broadcast.KafkaDispatcher.DEFAULT_BROADCAST_BUS;
 
 public class KafkaPublisher implements Publisher {
-    private KafkaProducer<String, Object> kafkaProducer;
-    private Producer<String, Object> tracedProducer;
+    private KafkaProducer<String, Notify> kafkaProducer;
+    private Producer<String, Notify> tracedProducer;
 
     public KafkaPublisher(String bootstrap) {
         Properties properties = initProperties();
@@ -50,7 +50,7 @@ public class KafkaPublisher implements Publisher {
         notify.tag = channel;
         notify.payload = payload;
 
-        ProducerRecord<String, Object> producerRecord = new ProducerRecord<>(topic, 0, null, notify);
+        ProducerRecord<String, Notify> producerRecord = new ProducerRecord<>(topic, 0, null, notify);
         if (this.tracedProducer != null) {
             tracedProducer.send(producerRecord);
         } else {

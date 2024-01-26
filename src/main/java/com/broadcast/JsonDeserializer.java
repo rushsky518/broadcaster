@@ -1,17 +1,24 @@
 package com.broadcast;
 
-import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class JsonDeserializer<T> implements Deserializer<T> {
+public class JsonDeserializer implements Deserializer<Notify> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonDeserializer.class);
+
     @Override
-    public T deserialize(String topic, byte[] data) {
+    public Notify deserialize(String topic, byte[] data) {
         try {
-           return (T) JsonJacksonCodec.INSTANCE.mapObjectMapper.readValue(data, Object.class);
+           return JsonJacksonCodec.INSTANCE.mapObjectMapper.readValue(data, Notify.class);
         } catch (IOException e) {
-            throw new SerializationException("Error when de-serializing", e);
+            LOGGER.error("error deserialize", e);
         }
+
+        Notify fallback = new Notify();
+        fallback.data = new String(data);
+        return fallback;
     }
 }
