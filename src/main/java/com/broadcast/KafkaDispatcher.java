@@ -93,12 +93,24 @@ public class KafkaDispatcher extends Thread implements Subscriber {
 
         final List<Future> futureList = new ArrayList<>(32);
         while (!stop) {
-            ConsumerRecords<String, Notify> records = kafkaConsumer.poll(Duration.ofSeconds(5));
+            ConsumerRecords<String, Notify> records;
+            try {
+                records = kafkaConsumer.poll(Duration.ofSeconds(5));
+            } catch (Exception ex) {
+                LOGGER.error("poll error", ex);
+                continue;
+            }
+
             for (ConsumerRecord<String, Notify> record : records) {
                 Notify notify = record.value();
                 notify.createTime = record.timestamp();
-                ExecutorService executorService = executorMap.getOrDefault(notify.getTag(), defaultExecutorService);
-                MessageListener<Notify> listener = subscriberMap.get(notify.getTag());
+                String tag = notify.getTag();
+                ExecutorService executorService = executorMap.getOrDefault(tag, defaultExecutorService);
+                MessageListener<Notify> listener = subscriberMap.get(tag);
+                if (listener == null) {
+                    LOGGER.trace("{} listener is empty", tag);
+                    continue;
+                }
                 Runnable runnable = () -> {
                     Span span = null;
                     if (this.kafkaTracing != null) {
