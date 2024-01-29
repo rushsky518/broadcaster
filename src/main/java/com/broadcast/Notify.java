@@ -1,6 +1,8 @@
 package com.broadcast;
 
 public final class Notify {
+    String serviceName;
+    String instance;
     long createTime;
     String tag;
     // 应用中使用到的 java 类型

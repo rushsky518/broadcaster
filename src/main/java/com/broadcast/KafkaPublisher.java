@@ -14,18 +14,30 @@ import static com.broadcast.KafkaDispatcher.DEFAULT_BROADCAST_BUS;
 public class KafkaPublisher implements Publisher {
     private KafkaProducer<String, Notify> kafkaProducer;
     private Producer<String, Notify> tracedProducer;
+    private String serviceName;
 
     public KafkaPublisher(String bootstrap) {
-        Properties properties = initProperties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
-        this.kafkaProducer = new KafkaProducer<>(properties);
+        this(bootstrap, null, null);
+    }
+
+    public KafkaPublisher(String bootstrap, String serviceName) {
+        this(bootstrap, null, serviceName);
     }
 
     public KafkaPublisher(String bootstrap, KafkaTracing kafkaTracing) {
+        this(bootstrap, kafkaTracing, null);
+    }
+
+    public KafkaPublisher(String bootstrap, KafkaTracing kafkaTracing, String serviceName) {
         Properties properties = initProperties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
         this.kafkaProducer = new KafkaProducer<>(properties);
-        this.tracedProducer = kafkaTracing.producer(this.kafkaProducer);
+        if (kafkaTracing != null) {
+            this.tracedProducer = kafkaTracing.producer(this.kafkaProducer);
+        }
+        if (serviceName != null) {
+            this.serviceName = serviceName;
+        }
     }
 
     private Properties initProperties() {
@@ -40,6 +52,11 @@ public class KafkaPublisher implements Publisher {
     }
 
     @Override
+    public String serviceName() {
+        return serviceName;
+    }
+
+    @Override
     public void publish(String channel, Object payload) {
         publish(DEFAULT_BROADCAST_BUS, channel, payload);
     }
@@ -47,6 +64,9 @@ public class KafkaPublisher implements Publisher {
     @Override
     public void publish(String topic, String channel, Object payload) {
         Notify notify = new Notify();
+        if (serviceName() != null) {
+            notify.serviceName = serviceName;
+        }
         notify.tag = channel;
         notify.payload = payload;
 
