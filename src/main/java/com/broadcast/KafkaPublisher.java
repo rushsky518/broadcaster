@@ -7,6 +7,8 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Properties;
 
 import static com.broadcast.KafkaDispatcher.DEFAULT_BROADCAST_BUS;
@@ -15,6 +17,7 @@ public class KafkaPublisher implements Publisher {
     private KafkaProducer<String, Notify> kafkaProducer;
     private Producer<String, Notify> tracedProducer;
     private String serviceName;
+    private String instance;
 
     public KafkaPublisher(String bootstrap) {
         this(bootstrap, null, null);
@@ -22,6 +25,14 @@ public class KafkaPublisher implements Publisher {
 
     public KafkaPublisher(String bootstrap, String serviceName) {
         this(bootstrap, null, serviceName);
+
+        InetAddress localHost = null;
+        try {
+            localHost = InetAddress.getLocalHost();
+            this.instance = localHost.getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     public KafkaPublisher(String bootstrap, KafkaTracing kafkaTracing) {
@@ -64,8 +75,10 @@ public class KafkaPublisher implements Publisher {
     @Override
     public void publish(String topic, String channel, Object payload) {
         Notify notify = new Notify();
+        // 填充发送方信息
         if (serviceName() != null) {
-            notify.serviceName = serviceName;
+            notify.serviceName = this.serviceName;
+            notify.instance = this.instance;
         }
         notify.tag = channel;
         notify.payload = payload;

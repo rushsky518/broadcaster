@@ -26,7 +26,6 @@ public class KafkaDispatcher extends Thread implements Subscriber {
     private volatile boolean stop = false;
     private static Map<String, MessageListener<Notify>> subscriberMap = new ConcurrentHashMap<>();
     private Map<String, ExecutorService> executorMap = new ConcurrentHashMap<>();
-    private KafkaDispatcher kafkaDispatcher;
     private final ExecutorService defaultExecutorService = Executors.newSingleThreadExecutor();
     private KafkaTracing kafkaTracing;
 
@@ -145,9 +144,9 @@ public class KafkaDispatcher extends Thread implements Subscriber {
             // 等待任务执行
             try {
                 for (Future future : futureList) {
-                    future.get();
+                    future.get(3000, TimeUnit.MILLISECONDS);
                 }
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 LOGGER.error("future get error", e);
             } finally {
                 futureList.clear();
